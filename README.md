@@ -65,6 +65,7 @@ Open http://localhost:5173 and sign in! 🎉
 
 **Full walkthrough**: See [`QUICK_START.md`](./QUICK_START.md)
 
+
 ## 📚 Documentation
 
 | Document | Description |
