@@ -17,14 +17,10 @@ import { getLoyaltyAccount, isSupabaseConfigured } from '@/lib/supabase';
 import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
 import { Toaster, toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
-import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 
-// Logo placeholder - replace with actual logo URL
+// Logo and burger hero images
 const logo = "https://images.unsplash.com/photo-1625331725309-83e4f3c1373b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXJnZXIlMjByZXN0YXVyYW50JTIwbG9nb3xlbnwxfHx8fDE3Njk2Njg1ODB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-
-// Burger hero - uses your Figma image with Unsplash fallback
-const burgerHeroFigma = "figma:asset/a1b66dc9acd00e8ce4d7b3037dccdb04bc301407.png";
-const burgerHeroFallback = "https://images.unsplash.com/photo-1653581490850-bf7c7b7fc1c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZWxpY2lvdXMlMjBjaGVlc2VidXJnZXIlMjBmcmllcyUyMHJlc3RhdXJhbnR8ZW58MXx8fHwxNzY5NzU4NjEwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+const burgerHero = "https://images.unsplash.com/photo-1653581490850-bf7c7b7fc1c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZWxpY2lvdXMlMjBjaGVlc2VidXJnZXIlMjBmcmllcyUyMHJlc3RhdXJhbnR8ZW58MXx8fHwxNzY5NzU4NjEwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 
 const LOCATIONS: Location[] = [
   {
@@ -486,9 +482,8 @@ function MainApp() {
               className="relative bg-white border-2 border-red-200 rounded-2xl overflow-hidden shadow-xl cursor-pointer hover:shadow-2xl transition-shadow group"
             >
               <div className="relative h-56 overflow-hidden">
-                <ImageWithFallback
-                  src={burgerHeroFigma}
-                  fallback={burgerHeroFallback}
+                <img
+                  src={burgerHero}
                   alt="Delicious Burgers"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
