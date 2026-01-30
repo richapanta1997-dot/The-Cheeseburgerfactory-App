@@ -9,7 +9,8 @@ import {
   Award,
   Star,
   ExternalLink,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 import { QuickActionButton } from '@/app/components/quick-action-button';
 import { FeaturedItem } from '@/app/components/featured-item';
@@ -31,14 +32,20 @@ import { Button } from '@/app/components/ui/button';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
 
+// ⭐ GOOGLE REVIEWS CONFIGURATION - UPDATE THESE VALUES! ⭐
+const GOOGLE_REVIEWS = {
+  rating: 4.8, // Update with your actual Google rating
+  totalReviews: 2400, // Update with your actual review count
+  reviewsUrl: 'https://www.google.com/search?q=cheeseburger+factory+burwood+reviews#lrd=0x6b12bbf638ef7ce9:0x45f163abf2f6549,1,,,', // Update with your Google Maps/Reviews link
+};
+
 const LOCATIONS: Location[] = [
   {
     id: 'burwood',
     name: 'Burwood',
     address: '320-324 Parramatta Rd, Burwood NSW 2134',
-    distance: '1.2 km',
-    hours: 'Mon-Sun: 11:00 AM - 10:00 PM',
-    phone: '(02) 9745 1234'
+    phone: '0499 952 010',
+    hours: 'Mon-Thu: 12pm-12am | Fri: 4pm-12am | Sat: 12pm-12am | Sun: 12pm-10pm',
   },
 ];
 
@@ -57,7 +64,7 @@ const MENU_ITEMS: MenuItem[] = [
     id: 'burger-2',
     name: 'Double Cheeseburger',
     description: '2 X Smashed Beef Patty, Cheese, Ketchup, Mustard, Onion, Pickles, Milk Bun',
-    price: 13.90,
+    price: 12.90,
     category: 'Burgers',
     image: '',
     popular: true,
@@ -335,7 +342,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
 ];
 
-type ViewType = 'home' | 'menu' | 'orders' | 'loyalty' | 'favorites' | 'find-us';
+type ViewType = 'home' | 'menu' | 'orders' | 'loyalty' | 'find-us' | 'reviews';
 
 function MainApp() {
   const { user, loading: authLoading, signIn } = useAuth();
@@ -373,6 +380,10 @@ function MainApp() {
 
   const handleOrderNow = () => {
     window.open('https://ou.abacus.co/en/Store/5972057/', '_blank');
+  };
+
+  const handleViewReviews = () => {
+    window.open(GOOGLE_REVIEWS.reviewsUrl, '_blank');
   };
 
   const popularItems = MENU_ITEMS.filter(item => item.popular);
@@ -436,13 +447,6 @@ function MainApp() {
                   selectedLocation={selectedLocation}
                   onSelectLocation={handleLocationChange}
                 />
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 text-sm font-medium">4.8</span>
-                  </div>
-                  <span className="text-sm text-gray-600">(2.4k reviews)</span>
-                </div>
               </div>
               <Heart className="h-6 w-6 text-gray-400 mt-2" />
             </div>
@@ -569,20 +573,6 @@ function MainApp() {
           </div>
         )}
 
-        {currentView === 'favorites' && (
-          <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Favorites</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {popularItems.map((item) => (
-                <MenuItemCard
-                  key={item.id}
-                  item={item}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
         {currentView === 'find-us' && (
           <div className="p-4">
             <FindUs
@@ -590,6 +580,50 @@ function MainApp() {
               selectedLocation={selectedLocation}
               onSelectLocation={handleLocationChange}
             />
+          </div>
+        )}
+
+        {currentView === 'reviews' && (
+          <div className="p-4 flex items-center justify-center min-h-[60vh]">
+            <div className="w-full max-w-sm space-y-6">
+              {/* Google Reviews Card */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-gray-900 text-lg">Google Reviews</h3>
+                  <ExternalLink className="h-4 w-4 text-gray-400" />
+                </div>
+                
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`h-6 w-6 ${
+                          i < Math.floor(GOOGLE_REVIEWS.rating) 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'fill-gray-200 text-gray-200'
+                        }`} 
+                      />
+                    ))}
+                  </div>
+                  <span className="text-2xl font-bold text-gray-900">{GOOGLE_REVIEWS.rating}</span>
+                </div>
+                
+                <p className="text-sm text-gray-600 mb-6">
+                  Based on {GOOGLE_REVIEWS.totalReviews.toLocaleString()} reviews
+                </p>
+
+                {/* Leave a Review Button */}
+                <Button
+                  onClick={handleViewReviews}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-6 text-lg font-semibold"
+                  size="lg"
+                >
+                  <MessageSquare className="mr-2 h-5 w-5" />
+                  LEAVE US A REVIEW
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </main>
@@ -616,13 +650,13 @@ function MainApp() {
             <span className="text-xs">Menu</span>
           </button>
           <button
-            onClick={() => setCurrentView('favorites')}
+            onClick={() => setCurrentView('reviews')}
             className={`flex flex-col items-center gap-1 ${
-              currentView === 'favorites' ? 'text-red-500' : 'text-gray-400'
-            }`}
+              currentView === 'reviews' ? 'text-yellow-500' : 'text-gray-400'
+            } hover:text-yellow-500 transition-colors`}
           >
-            <Heart className="h-6 w-6" />
-            <span className="text-xs">Favorites</span>
+            <Star className="h-6 w-6" />
+            <span className="text-xs">Reviews</span>
           </button>
           <button
             onClick={() => setCurrentView('find-us')}
