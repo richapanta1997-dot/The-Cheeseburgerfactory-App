@@ -7,39 +7,36 @@ import {
   UtensilsCrossed,
   MapPin,
   Award,
-  Star,
   ExternalLink,
   AlertCircle,
-  MessageSquare,
-  HelpCircle
+  HelpCircle,
+  Tag,
+  Gift,
+  ShoppingBag,
+  Bike,
+  Menu,
+  Instagram,
+  Music
 } from 'lucide-react';
-import { QuickActionButton } from '@/app/components/quick-action-button';
-import { FeaturedItem } from '@/app/components/featured-item';
-import { PopularItemCard } from '@/app/components/popular-item-card';
-import { MenuItemCard, type MenuItem } from '@/app/components/menu-item';
-import { LoyaltyCard } from '@/app/components/loyalty-card';
-import { OrderHistory, type Order } from '@/app/components/order-history';
-import { LocationSelector, type Location } from '@/app/components/location-selector';
-import { FindUs } from '@/app/components/find-us';
-import { AuthScreen } from '@/app/components/auth-screen';
-import { ProfileView } from '@/app/components/profile-view';
-import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
-import { AuthProvider, useAuth } from '@/contexts/auth-context';
-import { getLoyaltyAccount, LoyaltyAccount, isSupabaseConfigured } from '@/lib/supabase';
-import { toast } from 'sonner';
-import { Toaster } from '@/app/components/ui/sonner';
-import { ScrollArea } from '@/app/components/ui/scroll-area';
-import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
+import { Badge } from '@/app/components/ui/badge';
 import { Skeleton } from '@/app/components/ui/skeleton';
+import { MenuItemCard } from '@/app/components/menu-item';
+import type { MenuItem } from '@/app/components/menu-item';
+import { OrderHistory } from '@/app/components/order-history';
+import type { Order } from '@/app/components/order-history';
+import { LoyaltyCard } from '@/app/components/loyalty-card';
+import type { LoyaltyAccount } from '@/app/components/loyalty-card';
+import { ProfileView } from '@/app/components/profile-view';
+import { FindUs } from '@/app/components/find-us';
+import type { Location } from '@/app/components/location-selector';
+import { AuthProvider, useAuth } from '@/contexts/auth-context';
+import { getLoyaltyAccount, isSupabaseConfigured } from '@/lib/supabase';
+import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
+import { Toaster, toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
-
-// ⭐ GOOGLE REVIEWS CONFIGURATION - UPDATE THESE VALUES! ⭐
-const GOOGLE_REVIEWS = {
-  rating: 4.8, // Update with your actual Google rating
-  totalReviews: 2400, // Update with your actual review count
-  reviewsUrl: 'https://www.google.com/search?q=cheeseburger+factory+burwood+reviews#lrd=0x6b12bbf638ef7ce9:0x45f163abf2f6549,1,,,', // Update with your Google Maps/Reviews link
-};
+import logo from 'figma:asset/fae4a7c7eee7dab07e18b0071bb91e8023d3b996.png';
+import burgerHero from 'figma:asset/a1b66dc9acd00e8ce4d7b3037dccdb04bc301407.png';
 
 const LOCATIONS: Location[] = [
   {
@@ -344,7 +341,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
 ];
 
-type ViewType = 'home' | 'menu' | 'orders' | 'loyalty' | 'find-us' | 'reviews';
+type ViewType = 'home' | 'order-now' | 'orders' | 'loyalty' | 'find-us' | 'promotions';
 
 function MainApp() {
   const { user, loading: authLoading, signIn } = useAuth();
@@ -384,12 +381,6 @@ function MainApp() {
   const handleOrderNow = () => {
     window.open('https://ou.abacus.co/en/Store/5972057/', '_blank');
   };
-
-  const handleViewReviews = () => {
-    window.open(GOOGLE_REVIEWS.reviewsUrl, '_blank');
-  };
-
-  const popularItems = MENU_ITEMS.filter(item => item.popular);
 
   // Show auth screen if user is not logged in
   if (!supabaseConfigured) {
@@ -443,103 +434,191 @@ function MainApp() {
       {/* Main Content */}
       <main className="max-w-md mx-auto">
         {currentView === 'home' && (
-          <div className="space-y-6 p-4">
-            {/* Header */}
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold mb-2">Cheeseburger Factory</h1>
-                <LocationSelector
-                  locations={LOCATIONS}
-                  selectedLocation={selectedLocation}
-                  onSelectLocation={handleLocationChange}
+          <div className="space-y-4 p-4">
+            {/* Compact Header with Logo */}
+            <div className="bg-gradient-to-r from-red-500 to-orange-500 rounded-xl p-4 text-white text-center">
+              <div className="flex items-center justify-center gap-3">
+                <img 
+                  src={logo} 
+                  alt="Cheeseburger Factory" 
+                  className="w-14 h-14 drop-shadow-lg"
                 />
-              </div>
-              {user ? (
-                <button
-                  onClick={() => setCurrentView('loyalty')}
-                  className="flex items-center gap-2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
-                >
-                  {user.user_metadata?.avatar_url ? (
-                    <img 
-                      src={user.user_metadata.avatar_url} 
-                      alt="Profile" 
-                      className="h-8 w-8 rounded-full"
-                    />
-                  ) : (
-                    <User className="h-8 w-8 text-gray-600" />
-                  )}
-                </button>
-              ) : (
-                <button
-                  onClick={() => signIn()}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md"
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
-
-            {/* Featured Item */}
-            <FeaturedItem
-              name="Camel Burger"
-              badge="Limited Offer"
-              originalPrice={15.99}
-              salePrice={9.99}
-            />
-
-            {/* Quick Actions */}
-            <div>
-              <h2 className="font-semibold mb-4">Quick Action</h2>
-              <div className="grid grid-cols-4 gap-4">
-                <QuickActionButton
-                  icon={UtensilsCrossed}
-                  label="Menu"
-                  color="bg-yellow-500"
-                  onClick={() => setCurrentView('menu')}
-                />
-                <QuickActionButton
-                  icon={Award}
-                  label="Rewards"
-                  color="bg-green-500"
-                  onClick={() => setCurrentView('loyalty')}
-                />
-                <QuickActionButton
-                  icon={MapPin}
-                  label="Find Us"
-                  color="bg-blue-500"
-                  onClick={() => setCurrentView('find-us')}
-                />
-              </div>
-            </div>
-
-            {/* Popular Items */}
-            <div>
-              <h2 className="font-semibold mb-4">Popular Items</h2>
-              <ScrollArea className="w-full">
-                <div className="flex gap-4 pb-2">
-                  {popularItems.map((item) => (
-                    <PopularItemCard
-                      key={item.id}
-                      name={item.name}
-                      image={item.image}
-                      price={item.price}
-                      rating={4.8}
-                      onClick={() => {}}
-                    />
-                  ))}
+                <div className="text-left">
+                  <h1 className="text-xl font-bold">Cheeseburger Factory</h1>
+                  <p className="text-white/90 text-sm">Premium burgers delivered fresh</p>
                 </div>
-              </ScrollArea>
+              </div>
             </div>
 
-            {/* Order Now Button */}
-            <Button
-              onClick={handleOrderNow}
-              className="w-full bg-red-500 hover:bg-red-600 text-white py-6 text-lg font-semibold"
-              size="lg"
+            {/* Loyalty Points Preview (if signed in) */}
+            {user && loyaltyAccount && (
+              <div 
+                onClick={() => setCurrentView('loyalty')}
+                className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Award className="h-7 w-7 text-yellow-600" />
+                    <div>
+                      <p className="text-xs text-gray-600 font-medium">Your Rewards</p>
+                      <p className="text-xl font-bold text-gray-900">{loyaltyAccount.points} points</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-yellow-700">{loyaltyAccount.tier}</p>
+                    <p className="text-xs text-gray-500">Tap →</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Info - Sign in to earn rewards */}
+            {!user && (
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <Award className="h-7 w-7 text-green-600" />
+                  <div>
+                    <p className="font-bold text-gray-900">Earn Rewards!</p>
+                    <p className="text-xs text-gray-600">Sign in to collect points</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => signIn()}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  size="sm"
+                >
+                  Sign In with Google
+                </Button>
+              </div>
+            )}
+
+            {/* Hero Menu Section with New Image */}
+            <div 
+              onClick={() => setCurrentView('order-now')}
+              className="relative bg-white border-2 border-red-200 rounded-2xl overflow-hidden shadow-xl cursor-pointer hover:shadow-2xl transition-shadow group"
             >
-              <ExternalLink className="mr-2 h-5 w-5" />
-              Order Now
-            </Button>
+              <div className="relative h-56 overflow-hidden">
+                <img 
+                  src={burgerHero}
+                  alt="Delicious Burgers"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-1">Order Now</h3>
+                      <p className="text-white/90 text-sm">Fresh, juicy burgers await</p>
+                    </div>
+                    <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                      <UtensilsCrossed className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 bg-gradient-to-r from-red-500 to-orange-500">
+                <div className="flex items-center justify-center gap-2 text-white font-semibold">
+                  <ShoppingBag className="h-5 w-5" />
+                  <span>PICKUP OR DELIVERY</span>
+                  <span className="text-white/80">→</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action Cards Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Special Offers Card */}
+              <div 
+                onClick={() => setCurrentView('promotions')}
+                className="bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl p-4 text-white cursor-pointer hover:shadow-lg transition-shadow"
+              >
+                <Tag className="h-8 w-8 mb-2" />
+                <h4 className="font-bold text-sm mb-1">Special Offers</h4>
+                <p className="text-xs text-white/90">Save on combos!</p>
+              </div>
+
+              {/* Find Us Card */}
+              <div 
+                onClick={() => setCurrentView('find-us')}
+                className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white cursor-pointer hover:shadow-lg transition-shadow"
+              >
+                <MapPin className="h-8 w-8 mb-2" />
+                <h4 className="font-bold text-sm mb-1">Find Us</h4>
+                <p className="text-xs text-white/90">Locations & hours</p>
+              </div>
+            </div>
+
+            {/* Location Quick Info */}
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 text-sm mb-1">{selectedLocation.name}</h4>
+                  <p className="text-xs text-gray-600 mb-2">{selectedLocation.address}</p>
+                  <p className="text-xs text-gray-500">{selectedLocation.hours}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Media Section */}
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <h4 className="font-semibold text-gray-900 mb-3 text-sm">Follow Us</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => window.open('https://www.instagram.com/cheeseburgerfactoryau/?igsh=OWpkdXg0Nm80c3Zz&utm_source=qr#', '_blank')}
+                  className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl text-white hover:shadow-lg transition-shadow"
+                >
+                  <Instagram className="h-6 w-6" />
+                  <span className="text-xs font-medium">Instagram</span>
+                </button>
+                <button
+                  onClick={() => window.open('https://www.tiktok.com/@thecheeseburgerfactoryau?lang=en', '_blank')}
+                  className="flex flex-col items-center gap-2 p-4 bg-black rounded-xl text-white hover:shadow-lg transition-shadow"
+                >
+                  <Music className="h-6 w-6" />
+                  <span className="text-xs font-medium">TikTok</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'order-now' && (
+          <div className="p-4 flex items-center justify-center min-h-[70vh]">
+            <div className="w-full max-w-sm space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">How would you like your order?</h2>
+                <p className="text-gray-600">Choose your preferred option</p>
+              </div>
+
+              {/* Pickup Option */}
+              <button
+                onClick={() => window.open('https://cheeseburgerfactory.com.au/order-now-2', '_blank')}
+                className="w-full bg-gradient-to-br from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              >
+                <ShoppingBag className="h-16 w-16 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">PICKUP</h3>
+                <p className="text-white/90">
+                  Order now and collect from store
+                </p>
+              </button>
+
+              {/* Delivery Option */}
+              <button
+                onClick={() => window.open('https://cheeseburgerfactory.com.au/order-now-2', '_blank')}
+                className="w-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              >
+                <Bike className="h-16 w-16 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">DELIVERY</h3>
+                <p className="text-white/90">
+                  Get it delivered to your door
+                </p>
+              </button>
+
+              <div className="text-center text-sm text-gray-500 pt-4">
+                Both options will redirect you to our online ordering system
+              </div>
+            </div>
           </div>
         )}
 
@@ -579,32 +658,106 @@ function MainApp() {
 
         {currentView === 'loyalty' && (
           <div className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">Profile & Rewards</h2>
-              <button
-                onClick={() => setShowTutorial(true)}
-                className="p-2 bg-red-50 hover:bg-red-100 rounded-full transition-colors"
-                title="How Loyalty Works"
-              >
-                <HelpCircle className="h-5 w-5 text-red-500" />
-              </button>
-            </div>
-            {loadingLoyalty ? (
-              <div className="space-y-4">
-                <Skeleton className="h-32 w-full rounded-lg" />
-                <Skeleton className="h-48 w-full rounded-lg" />
+            {!user ? (
+              // Show Sign In Prompt for non-authenticated users
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="w-full max-w-sm space-y-6 text-center">
+                  <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-8">
+                    <Award className="h-16 w-16 text-yellow-600 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                      Earn Rewards on Every Order!
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                      Sign in with Google to start earning points and unlock exclusive rewards
+                    </p>
+                    <Button
+                      onClick={() => signIn()}
+                      className="w-full bg-red-500 hover:bg-red-600 text-white py-6 text-lg font-semibold"
+                      size="lg"
+                    >
+                      Sign In with Google
+                    </Button>
+                  </div>
+                  
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 text-left">
+                    <h3 className="font-semibold text-gray-900 mb-3">🎁 Rewards Benefits:</h3>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-start gap-2">
+                        <span className="text-green-500 mt-0.5">✓</span>
+                        <span>Earn points on every purchase</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-green-500 mt-0.5">✓</span>
+                        <span>Unlock exclusive rewards & free items</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-green-500 mt-0.5">✓</span>
+                        <span>Tier progression with VIP benefits</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-green-500 mt-0.5">✓</span>
+                        <span>Birthday surprises & special offers</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             ) : (
+              // Show Profile & Rewards for authenticated users
               <>
-                <ProfileView loyaltyAccount={loyaltyAccount} />
-                <div className="mt-6">
-                  <LoyaltyCard
-                    points={loyaltyAccount?.points || 0}
-                    tier={loyaltyAccount?.tier || 'Bronze'}
-                    userId={user?.id}
-                    onRedeemReward={redeemReward}
-                  />
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold">Profile & Rewards</h2>
+                  <button
+                    onClick={() => setShowTutorial(true)}
+                    className="p-2 bg-red-50 hover:bg-red-100 rounded-full transition-colors"
+                    title="How Loyalty Works"
+                  >
+                    <HelpCircle className="h-5 w-5 text-red-500" />
+                  </button>
                 </div>
+                {loadingLoyalty ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-32 w-full rounded-lg" />
+                    <Skeleton className="h-48 w-full rounded-lg" />
+                  </div>
+                ) : (
+                  <>
+                    <ProfileView loyaltyAccount={loyaltyAccount} />
+                    <div className="mt-6">
+                      <LoyaltyCard
+                        points={loyaltyAccount?.points || 0}
+                        tier={loyaltyAccount?.tier || 'Bronze'}
+                        userId={user?.id}
+                        onRedeemReward={redeemReward}
+                      />
+                    </div>
+
+                    {/* Quick Actions Section */}
+                    <div className="mt-8 space-y-4">
+                      <h3 className="font-semibold text-gray-900 text-lg mb-4">Follow Us</h3>
+                      
+                      {/* Social Media Section */}
+                      <div className="bg-white border border-gray-200 rounded-xl p-5">
+                        <div className="grid grid-cols-2 gap-4">
+                          <button
+                            onClick={() => window.open('https://www.instagram.com/cheeseburgerfactoryau/?igsh=OWpkdXg0Nm80c3Zz&utm_source=qr#', '_blank')}
+                            className="flex flex-col items-center gap-2 p-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl text-white hover:shadow-lg transition-shadow"
+                          >
+                            <Instagram className="h-7 w-7" />
+                            <span className="text-sm font-medium">Instagram</span>
+                          </button>
+                          <button
+                            onClick={() => window.open('https://www.tiktok.com/@thecheeseburgerfactoryau?lang=en', '_blank')}
+                            className="flex flex-col items-center gap-2 p-5 bg-black rounded-xl text-white hover:shadow-lg transition-shadow"
+                          >
+                            <Music className="h-7 w-7" />
+                            <span className="text-sm font-medium">TikTok</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -620,47 +773,128 @@ function MainApp() {
           </div>
         )}
 
-        {currentView === 'reviews' && (
-          <div className="p-4 flex items-center justify-center min-h-[60vh]">
-            <div className="w-full max-w-sm space-y-6">
-              {/* Google Reviews Card */}
-              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900 text-lg">Google Reviews</h3>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
-                </div>
-                
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-6 w-6 ${
-                          i < Math.floor(GOOGLE_REVIEWS.rating) 
-                            ? 'fill-yellow-400 text-yellow-400' 
-                            : 'fill-gray-200 text-gray-200'
-                        }`} 
-                      />
-                    ))}
-                  </div>
-                  <span className="text-2xl font-bold text-gray-900">{GOOGLE_REVIEWS.rating}</span>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-6">
-                  Based on {GOOGLE_REVIEWS.totalReviews.toLocaleString()} reviews
-                </p>
+        {currentView === 'promotions' && (
+          <div className="p-4 space-y-6">
+            <h2 className="text-2xl font-bold mb-6">Special Offers</h2>
+            
+            {/* Featured Promotion Banner */}
+            <div className="bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl p-6 text-white shadow-xl">
+              <div className="flex items-start justify-between mb-3">
+                <Badge className="bg-yellow-400 text-black font-bold">LIMITED TIME</Badge>
+                <Gift className="h-8 w-8" />
+              </div>
+              <h3 className="text-3xl font-bold mb-2">Welcome Offer!</h3>
+              <p className="text-white/90 text-lg mb-4">
+                Get <span className="font-bold text-2xl">20% OFF</span> your first order
+              </p>
+              <Button
+                onClick={handleOrderNow}
+                className="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-4"
+              >
+                ORDER NOW & SAVE
+              </Button>
+            </div>
 
-                {/* Leave a Review Button */}
-                <Button
-                  onClick={handleViewReviews}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-6 text-lg font-semibold"
-                  size="lg"
-                >
-                  <MessageSquare className="mr-2 h-5 w-5" />
-                  LEAVE US A REVIEW
-                </Button>
+            {/* Promotion Cards */}
+            <div className="space-y-4">
+              {/* Combo Deal */}
+              <div className="bg-white border-2 border-orange-300 rounded-xl p-5 shadow-md">
+                <div className="flex items-start gap-4">
+                  <div className="bg-orange-100 p-3 rounded-full">
+                    <Tag className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-900 mb-1">Burger + Fries Combo</h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Any burger with large fries and a drink for just $15.90
+                    </p>
+                    <Badge variant="outline" className="border-orange-400 text-orange-700">
+                      Save $3.50
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Family Deal */}
+              <div className="bg-white border-2 border-blue-300 rounded-xl p-5 shadow-md">
+                <div className="flex items-start gap-4">
+                  <div className="bg-blue-100 p-3 rounded-full">
+                    <Gift className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-900 mb-1">Family Pack Deal</h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      4 burgers + 2 large fries + 4 drinks for $49.90
+                    </p>
+                    <Badge variant="outline" className="border-blue-400 text-blue-700">
+                      Perfect for 4 people
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Loyalty Bonus */}
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl p-5 shadow-md">
+                <div className="flex items-start gap-4">
+                  <div className="bg-yellow-100 p-3 rounded-full">
+                    <Award className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-900 mb-1">Double Points Week!</h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Earn 2X loyalty points on all orders this week
+                    </p>
+                    {user ? (
+                      <Button
+                        onClick={() => setCurrentView('loyalty')}
+                        variant="outline"
+                        size="sm"
+                        className="border-yellow-500 text-yellow-700 hover:bg-yellow-50"
+                      >
+                        View Your Points
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => signIn()}
+                        variant="outline"
+                        size="sm"
+                        className="border-yellow-500 text-yellow-700 hover:bg-yellow-50"
+                      >
+                        Sign In to Earn
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Student Discount */}
+              <div className="bg-white border-2 border-green-300 rounded-xl p-5 shadow-md">
+                <div className="flex items-start gap-4">
+                  <div className="bg-green-100 p-3 rounded-full">
+                    <Tag className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-900 mb-1">Student Special</h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Show your student ID for 15% off every Monday-Thursday
+                    </p>
+                    <Badge variant="outline" className="border-green-400 text-green-700">
+                      Valid student ID required
+                    </Badge>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Order Now CTA */}
+            <Button
+              onClick={handleOrderNow}
+              className="w-full bg-red-500 hover:bg-red-600 text-white py-6 text-lg font-semibold"
+              size="lg"
+            >
+              <ExternalLink className="mr-2 h-5 w-5" />
+              ORDER NOW
+            </Button>
           </div>
         )}
       </main>
@@ -678,22 +912,22 @@ function MainApp() {
             <span className="text-xs">Home</span>
           </button>
           <button
-            onClick={() => setCurrentView('menu')}
+            onClick={() => setCurrentView('order-now')}
             className={`flex flex-col items-center gap-1 ${
-              currentView === 'menu' ? 'text-red-500' : 'text-gray-400'
+              currentView === 'order-now' ? 'text-red-500' : 'text-gray-400'
             }`}
           >
-            <Search className="h-6 w-6" />
-            <span className="text-xs">Menu</span>
+            <UtensilsCrossed className="h-6 w-6" />
+            <span className="text-xs">Order</span>
           </button>
           <button
-            onClick={() => setCurrentView('reviews')}
+            onClick={() => setCurrentView('promotions')}
             className={`flex flex-col items-center gap-1 ${
-              currentView === 'reviews' ? 'text-yellow-500' : 'text-gray-400'
+              currentView === 'promotions' ? 'text-yellow-500' : 'text-gray-400'
             } hover:text-yellow-500 transition-colors`}
           >
-            <Star className="h-6 w-6" />
-            <span className="text-xs">Reviews</span>
+            <Tag className="h-6 w-6" />
+            <span className="text-xs">Offers</span>
           </button>
           <button
             onClick={() => setCurrentView('find-us')}
