@@ -10,7 +10,8 @@ import {
   Star,
   ExternalLink,
   AlertCircle,
-  MessageSquare
+  MessageSquare,
+  HelpCircle
 } from 'lucide-react';
 import { QuickActionButton } from '@/app/components/quick-action-button';
 import { FeaturedItem } from '@/app/components/featured-item';
@@ -22,6 +23,7 @@ import { LocationSelector, type Location } from '@/app/components/location-selec
 import { FindUs } from '@/app/components/find-us';
 import { AuthScreen } from '@/app/components/auth-screen';
 import { ProfileView } from '@/app/components/profile-view';
+import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 import { getLoyaltyAccount, LoyaltyAccount, isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -351,6 +353,7 @@ function MainApp() {
   const [loyaltyAccount, setLoyaltyAccount] = useState<LoyaltyAccount | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location>(LOCATIONS[0]);
   const [loadingLoyalty, setLoadingLoyalty] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Check if Supabase is configured
   const supabaseConfigured = isSupabaseConfigured();
@@ -434,6 +437,9 @@ function MainApp() {
     <div className="min-h-screen bg-gray-50 pb-20">
       <Toaster />
 
+      {/* Loyalty Tutorial Modal */}
+      {showTutorial && <LoyaltyTutorial onClose={() => setShowTutorial(false)} />}
+
       {/* Main Content */}
       <main className="max-w-md mx-auto">
         {currentView === 'home' && (
@@ -448,7 +454,29 @@ function MainApp() {
                   onSelectLocation={handleLocationChange}
                 />
               </div>
-              <Heart className="h-6 w-6 text-gray-400 mt-2" />
+              {user ? (
+                <button
+                  onClick={() => setCurrentView('loyalty')}
+                  className="flex items-center gap-2 bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+                >
+                  {user.user_metadata?.avatar_url ? (
+                    <img 
+                      src={user.user_metadata.avatar_url} 
+                      alt="Profile" 
+                      className="h-8 w-8 rounded-full"
+                    />
+                  ) : (
+                    <User className="h-8 w-8 text-gray-600" />
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => signIn()}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md"
+                >
+                  Sign In
+                </button>
+              )}
             </div>
 
             {/* Featured Item */}
@@ -551,7 +579,16 @@ function MainApp() {
 
         {currentView === 'loyalty' && (
           <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Profile & Rewards</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold">Profile & Rewards</h2>
+              <button
+                onClick={() => setShowTutorial(true)}
+                className="p-2 bg-red-50 hover:bg-red-100 rounded-full transition-colors"
+                title="How Loyalty Works"
+              >
+                <HelpCircle className="h-5 w-5 text-red-500" />
+              </button>
+            </div>
             {loadingLoyalty ? (
               <div className="space-y-4">
                 <Skeleton className="h-32 w-full rounded-lg" />
