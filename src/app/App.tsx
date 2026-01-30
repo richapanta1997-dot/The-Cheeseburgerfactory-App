@@ -35,8 +35,12 @@ import { getLoyaltyAccount, isSupabaseConfigured } from '@/lib/supabase';
 import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
 import { Toaster, toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
-import logo from 'figma:asset/fae4a7c7eee7dab07e18b0071bb91e8023d3b996.png';
-import burgerHero from 'figma:asset/a1b66dc9acd00e8ce4d7b3037dccdb04bc301407.png';
+
+// Logo placeholder - replace with actual logo URL
+const logo = "https://images.unsplash.com/photo-1625331725309-83e4f3c1373b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXJnZXIlMjByZXN0YXVyYW50JTIwbG9nb3xlbnwxfHx8fDE3Njk2Njg1ODB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+
+// Burger hero image
+const burgerHero = "https://images.unsplash.com/photo-1653581490850-bf7c7b7fc1c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZWxpY2lvdXMlMjBjaGVlc2VidXJnZXIlMjBmcmllcyUyMHJlc3RhdXJhbnR8ZW58MXx8fHwxNzY5NzU4NjEwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 
 const LOCATIONS: Location[] = [
   {
