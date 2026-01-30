@@ -23,7 +23,7 @@ import { LocationSelector, type Location } from '@/app/components/location-selec
 import { FindUs } from '@/app/components/find-us';
 import { AuthScreen } from '@/app/components/auth-screen';
 import { ProfileView } from '@/app/components/profile-view';
-import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial.tsx';
+import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 import { getLoyaltyAccount, LoyaltyAccount, isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
