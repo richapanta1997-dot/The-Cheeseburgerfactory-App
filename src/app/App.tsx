@@ -18,6 +18,9 @@ import { LoyaltyTutorial } from '@/app/components/loyalty-tutorial';
 import { Toaster, toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
 
+// Logo and burger hero images - using Unsplash for compatibility
+const logo = "https://image2url.com/r2/default/images/1770188301022-2c57f5bf-704f-4df6-833b-d52e43427dcd.jpeg";
+const burgerHero = "https://image2url.com/r2/default/images/1770188483693-10090a42-44d1-4aaa-aff0-9cb1c39464b8.blob";
 
 const LOCATIONS: Location[] = [
   {
@@ -363,31 +366,8 @@ function MainApp() {
     window.open('https://ou.abacus.co/en/Store/5972057/', '_blank');
   };
 
-  // Show auth screen if user is not logged in
-  if (!supabaseConfigured) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <Toaster />
-        <div className="max-w-2xl mx-auto mt-8">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Supabase Not Configured</AlertTitle>
-            <AlertDescription>
-              Please configure your Supabase credentials in the .env file to enable authentication and loyalty features.
-              <br /><br />
-              <strong>Required environment variables:</strong>
-              <ul className="list-disc list-inside mt-2">
-                <li>VITE_SUPABASE_URL</li>
-                <li>VITE_SUPABASE_ANON_KEY</li>
-              </ul>
-              <br />
-              See .env.example for reference.
-            </AlertDescription>
-          </Alert>
-        </div>
-      </div>
-    );
-  }
+  // Allow browsing without Supabase/auth - loyalty features will be disabled if not configured
+  // Removed the blocking "Supabase Not Configured" screen to allow basic menu browsing
 
   if (authLoading) {
     return (
@@ -399,11 +379,6 @@ function MainApp() {
       </div>
     );
   }
-
-  // Allow browsing without authentication - only loyalty features require sign-in
-  // if (!user) {
-  //   return <AuthScreen onSignIn={signIn} />;
-  // }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
