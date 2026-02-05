@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, Search, Heart, User, UtensilsCrossed, MapPin, Award, ExternalLink, AlertCircle, HelpCircle, Tag, Gift, ShoppingBag, Bike, Menu, Instagram, Music } from 'lucide-react';
+import { Home, Search, Heart, User, UtensilsCrossed, MapPin, Award, ExternalLink, AlertCircle, HelpCircle, Tag, Gift, ShoppingBag, Bike, Menu, Instagram, Music, MoreHorizontal, QrCode, Ticket } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { Skeleton } from '@/app/components/ui/skeleton';
@@ -325,7 +325,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
 ];
 
-type ViewType = 'home' | 'order-now' | 'orders' | 'loyalty' | 'find-us' | 'promotions';
+type ViewType = 'home' | 'order-now' | 'orders' | 'loyalty' | 'find-us' | 'promotions' | 'more';
 
 function MainApp() {
   const { user, loading: authLoading, signIn } = useAuth();
@@ -853,55 +853,87 @@ function MainApp() {
             </Button>
           </div>
         )}
+
+        {currentView === 'more' && (
+          <div className="p-4 space-y-6">
+            <h2 className="text-2xl font-bold mb-4">More Information</h2>
+            <div className="space-y-4">
+              <div className="bg-white border border-gray-200 rounded-xl p-5">
+                <h3 className="font-semibold text-gray-900 mb-3">About Us</h3>
+                <p className="text-sm text-gray-600">
+                  Cheeseburger Factory is a premium burger chain known for its juicy, fresh burgers and friendly service. We offer a wide range of burgers, sides, and combos to suit every taste.
+                </p>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-5">
+                <h3 className="font-semibold text-gray-900 mb-3">Contact Us</h3>
+                <p className="text-sm text-gray-600">
+                  For any inquiries or feedback, please contact us at:
+                </p>
+                <p className="text-sm text-gray-600 mt-2">
+                  <span className="font-bold">Phone:</span> 0499 952 010
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-bold">Email:</span> info@cheeseburgerfactory.com.au
+                </p>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-5">
+                <h3 className="font-semibold text-gray-900 mb-3">Opening Hours</h3>
+                <p className="text-sm text-gray-600">
+                  <span className="font-bold">Burwood:</span> Mon-Thu: 12pm-12am | Fri: 4pm-12am | Sat: 12pm-12am | Sun: 12pm-10pm
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t max-w-md mx-auto">
-        <div className="flex items-center justify-around py-3">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t max-w-md mx-auto shadow-lg">
+        <div className="flex items-center justify-around py-2.5">
           <button
             onClick={() => setCurrentView('home')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'home' ? 'text-red-500' : 'text-gray-400'
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
+              currentView === 'home' ? 'text-red-600' : 'text-gray-500'
             }`}
           >
             <Home className="h-6 w-6" />
-            <span className="text-xs">Home</span>
+            <span className="text-[10px] font-medium">Home</span>
           </button>
           <button
             onClick={() => setCurrentView('order-now')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'order-now' ? 'text-red-500' : 'text-gray-400'
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
+              currentView === 'order-now' ? 'text-red-600' : 'text-gray-500'
             }`}
           >
             <UtensilsCrossed className="h-6 w-6" />
-            <span className="text-xs">Order</span>
-          </button>
-          <button
-            onClick={() => setCurrentView('promotions')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'promotions' ? 'text-yellow-500' : 'text-gray-400'
-            } hover:text-yellow-500 transition-colors`}
-          >
-            <Tag className="h-6 w-6" />
-            <span className="text-xs">Offers</span>
-          </button>
-          <button
-            onClick={() => setCurrentView('find-us')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'find-us' ? 'text-red-500' : 'text-gray-400'
-            }`}
-          >
-            <MapPin className="h-6 w-6" />
-            <span className="text-xs">Locations</span>
+            <span className="text-[10px] font-medium">Order</span>
           </button>
           <button
             onClick={() => setCurrentView('loyalty')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'loyalty' ? 'text-red-500' : 'text-gray-400'
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
+              currentView === 'loyalty' ? 'text-red-600' : 'text-gray-500'
             }`}
           >
-            <User className="h-6 w-6" />
-            <span className="text-xs">Profile</span>
+            <Award className="h-6 w-6" />
+            <span className="text-[10px] font-medium">Rewards</span>
+          </button>
+          <button
+            onClick={() => setCurrentView('promotions')}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
+              currentView === 'promotions' ? 'text-red-600' : 'text-gray-500'
+            }`}
+          >
+            <QrCode className="h-6 w-6" />
+            <span className="text-[10px] font-medium">Code</span>
+          </button>
+          <button
+            onClick={() => setCurrentView('more')}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
+              currentView === 'more' ? 'text-red-600' : 'text-gray-500'
+            }`}
+          >
+            <MoreHorizontal className="h-6 w-6" />
+            <span className="text-[10px] font-medium">More</span>
           </button>
         </div>
       </nav>
